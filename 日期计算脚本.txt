@@ -1,0 +1,85 @@
+  
+  //计算两个日期之间相差的（天数，时数，分数，秒数）
+  //startTime开始日期 格式：例如："2017/01/02 19:00"
+  //endTime 结束日期
+  function GetDateDiff(startTime, endTime, diffType)
+    {
+        //將計算間隔類性字元轉換為小寫
+        diffType = diffType.toLowerCase();
+
+        var sTime = new Date(startTime);      //開始時間
+        var eTime = new Date(endTime);  //結束時間
+
+        //作為除數的數位
+        var divNum = 1;
+
+        switch (diffType)
+        {
+            case "second":
+                divNum = 1000;
+                break;
+            case "minute":
+                divNum = 1000 * 60;
+                break;
+            case "hour":
+                divNum = 1000 * 3600;
+                break;
+            case "day":
+                divNum = 1000 * 3600 * 24;
+                break;
+            default:
+                break;
+        }
+
+        return parseFloat((eTime.getTime() - sTime.getTime()) / parseInt(divNum,10));
+
+    }
+	
+	///将date对象 拼成 如“2017/01/02 19:00” 格式	
+	function PingDate(date)
+	{
+		var Mon=(date.getMonth()+1)<10?"0"+(date.getMonth()+1):(date.getMonth()+1);
+		var D=date.getDate()<10?"0"+date.getDate():date.getDate();
+		var YY=date.getFullYear();
+		var H=date.getHours()<10?"0"+date.getHours():date.getHours();
+		var Min=date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes();
+		return YY.toString()+"/"+Mon.toString()+"/"+D.toString()+" "+H.toString()+":"+Min.toString();
+	}
+	//将日期加一，返回字符串结果
+	//参数：curDate 例如： "2017/01/02 19:00"
+	//number:数量  例如：加几天，加几个小时，分钟。
+	//addType：单位  例如：天，时，分，秒
+	function DateAddOne(curDate,number,addType)
+	{
+		//將計算間隔類性字元轉換為小寫
+        addType = addType.toLowerCase();
+        var sDate = new Date(curDate);
+		//作為除數的數位
+        var divNum = 1;
+		var addNum=0;//作为相加的数
+		
+		switch (addType)
+        {
+            case "second":
+                divNum = 1000;
+				addNum=number*divNum;
+                break;
+            case "minute":
+                divNum = 1000 * 60;
+				addNum=number*divNum;
+                break;
+            case "hour":
+                divNum = 1000 * 3600;
+				addNum=number*divNum;
+                break;
+            case "day":
+                divNum = 1000 * 3600 * 24;
+				addNum=number*divNum;
+                break;
+            default:
+                break;
+        }
+		var ResultDate=new Date((sDate.getTime() + addNum));
+		return PingDate(ResultDate);
+		
+	}

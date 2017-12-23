@@ -1,0 +1,50 @@
+       public void GetGoodsListInCategory()
+        {
+           
+            BLL.sysItem sysBll = new BLL.sysItem();
+            DataSet ds = sysBll.GetList(" sicId=6");
+            DataTable dt = ds.Tables[0];
+            //获取全部集合
+            List<Model.sysItem> allModel = new List<Model.sysItem>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow dr = dt.Rows[i];
+                Model.sysItem model = new Model.sysItem();
+                model.siId = (int)dr["siId"];
+                model.parentId = (int)dr["parentId"];
+                model.sicId = (int)dr["sicId"];
+                model.itemName = dr["itemName"] != null ? dr["itemName"].ToString() : "";
+                model.itemPath = dr["itemPath"] != null ? dr["itemPath"].ToString() : "";
+                allModel.Add(model);
+            }
+            //筛选顶级分类 
+            var topItems = allModel.Where(p => p.parentId == 0).ToList();
+            List<Model.sysItem> topModels = new List<Model.sysItem>();
+            foreach (var item in topItems)
+            {
+                Model.sysItem topModel = new Model.sysItem();
+                topModel.siId = item.siId;
+                topModel.parentId = item.parentId;
+                topModel.itemName = item.itemName;
+                topModel.itemPath = item.itemPath;
+                topModel.sicId = item.sicId;
+                LoopToAppendChildren(allModel, topModel);
+                topModels.Add(topModel);
+            }
+
+        }
+        /// <summary>  
+        /// 继续追溯子类  
+        /// </summary>  
+        /// <param name="allList">全部数据</param>  
+        /// <param name="curItem">当前节点</param>  
+        protected void LoopToAppendChildren(List<Model.sysItem> allList, Model.sysItem curItem)
+        {
+            var subItems = allList.Where(p => p.parentId == curItem.siId).ToList();
+            curItem.childs = new List<Model.sysItem>();
+            curItem.childs.AddRange(subItems);
+            foreach (var subItem in subItems)
+            {
+                LoopToAppendChildren(allList, subItem);
+            }
+        }
